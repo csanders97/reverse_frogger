@@ -1,0 +1,24 @@
+{
+  "name": "reggorf",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "JBarry",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csanders97/reverse_frogger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/csanders97/reverse_frogger/issues"
+  },
+  "homepage": "https://github.com/csanders97/reverse_frogger#readme",
+  "description": ""
+}

@@ -1,7 +1,7 @@
 var app = {
     socket: null,
     stage: null,
-
+    assets: null,
 	// My game object
     myGameObject: null,
     player2: null,
@@ -17,7 +17,7 @@ var app = {
 		},
 		target: {
 			x: 150,
-			y: 200
+			y: 185
 		}
     },
 	gameObjectPosition2: {
@@ -50,9 +50,39 @@ var app = {
         this.stage = new createjs.Stage(canvas);
     },
 
+    beginLoad: function() {
+        manifest = [
+            {
+                src: 'assets/images/bg-temp.png',
+                id: 'background'
+            },
+            {
+                src: 'assets/sfx/dead.wav',
+                id: 'death'
+            }
+        ];
+
+        this.assets = new createjs.LoadQueue(true); 
+
+        createjs.Sound.alternateExtensions = ['ogg'];
+
+        this.assets.installPlugin(createjs.Sound);
+
+        this.assets.on('progress', function (event) { console.log(((event.loaded / event.total) * 100) + '%'); });
+
+        this.assets.on('complete', function (event) {
+            app.init();
+        });
+
+        this.assets.loadManifest(manifest);
+    },
+
     init: function() {
         this.setupCanvas();
         this.socket = io();
+
+        var stageBG = new createjs.Bitmap(app.assets.getResult('background'));
+        this.stage.addChild(stageBG);
 
         this.socket.on('newJoin', function(newPlayerID) {
             console.log(newPlayerID + ' has just joined the game');
@@ -246,4 +276,4 @@ var app = {
 	}
 }
 
-app.init();
+app.beginLoad();

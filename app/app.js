@@ -17,7 +17,7 @@ var app = {
 		},
 		target: {
 			x: 150,
-			y: 180
+			y: 185
 		}
     },
 	gameObjectPosition2: {

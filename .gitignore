@@ -1,2 +1,7 @@
 node_modules
 app/assets/sfx/New Ventures.wav
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/misc.xml
+.idea/reverse_frogger.iml
+.idea/modules.xml

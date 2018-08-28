@@ -12,18 +12,18 @@ var app = {
 	// Values to lerp between
 	gameObjectPosition: {
 		start: {
-			x: null,
-			y: null
+			x: 20,
+			y: 180
 		},
 		target: {
 			x: 150,
-			y: 185
+			y: 200
 		}
     },
 	gameObjectPosition2: {
 		start: {
-			x: null,
-			y: null
+			x: 20,
+			y: 300
 		},
 		target: {
 			x: 150,
@@ -267,12 +267,12 @@ var app = {
         this.scaleText2.x = app.player2.x;
         this.scaleText2.y = app.player2.y;
         this.stage.addChild(this.scaleText2);
-        if(this.scaleText.x > this.scaleText2.x && this.scaleText.x < this.scaleText2.x +10) {
-            this.scaleText.font = "30px Arial";
-            this.stage.addChild(this.scaleText);
-            this.scaleText2.font = "30px Cursive";
-            this.stage.addChild(this.scaleText2);
-        }
+        // if(this.scaleText.x > this.scaleText2.x && this.scaleText.x < this.scaleText2.x +10) {
+        //     this.scaleText.font = "30px Arial";
+        //     this.stage.addChild(this.scaleText);
+        //     this.scaleText2.font = "30px Cursive";
+        //     this.stage.addChild(this.scaleText2);
+        // }
 	}
 }
 

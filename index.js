@@ -8,8 +8,8 @@ var players = 0;
 var playersArr = [];
 var currentPosX = 150;
 var currentPosY = 200;
-var currentPosX2 = 0;
-var currentPosY2 = 0;
+var currentPosX2 = 20;
+var currentPosY2 = 300;
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/app/index.html');

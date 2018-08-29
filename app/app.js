@@ -53,6 +53,9 @@ var app = {
     beginLoad: function() {
         manifest = [
             {
+                src: 'js/actor/actor.js',
+            },
+            {
                 src: 'assets/images/bg-temp.png',
                 id: 'background'
             },
@@ -232,14 +235,12 @@ var app = {
         if(app.activePlayer == "Player 1") {
             // Change the object's position
             this.myGameObject.x = this.lerp(this.gameObjectPosition.start.x, this.gameObjectPosition.target.x, percentVal);
-            this.myGameObject.y = this.lerp(this.gameObjectPosition.start.y, this.gameObjectPosition.target.y, percentVal);
         
             // Update the text displays
             this.updateTextDisplays();
         } else {
             // Change the object's position
             this.player2.x = this.lerp(this.gameObjectPosition2.start.x, this.gameObjectPosition2.target.x, percentVal);
-            this.player2.y = this.lerp(this.gameObjectPosition2.start.y, this.gameObjectPosition2.target.y, percentVal);
 
             // Update the text displays
             this.updateTextDisplays();

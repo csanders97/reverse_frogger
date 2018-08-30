@@ -107,7 +107,6 @@ var app = {
             console.log(playerID + ' has left the game');
         });
 
-        this.socket.on('updatePosition', function (startX, startY, targetX, targetY, id) {
 
         var score = 0;
         if (!isNaN(Cookies.get('score'))) {
@@ -119,6 +118,7 @@ var app = {
         newText.y = 10;
         this.stage.addChild(newText);
 
+        this.socket.on('updatePosition', function(startX, startY, targetX, targetY, id) {
             app.activePlayer = id;
             if (id === "Player 1") {
                 app.gameObjectPosition.start.x = startX;
@@ -306,8 +306,8 @@ var app = {
         this.scaleText.y = app.myGameObject.y;
         this.stage.addChild(this.scaleText);
 
-        this.scaleText2.x = app.player2.x;
-        this.scaleText2.y = app.player2.y;
+        this.scaleText2.x = this.player2.x;
+        this.scaleText2.y = this.player2.y;
         this.stage.addChild(this.scaleText2);
         // if(this.scaleText.x > this.scaleText2.x && this.scaleText.x < this.scaleText2.x +10) {
         //     this.scaleText.font = "30px Arial";

@@ -105,6 +105,17 @@ var app = {
             console.log(playerID + ' has left the game');
         });
 
+
+        var score = 0;
+        if (!isNaN(Cookies.get('score'))) {
+            score = Cookies.get('score');
+        }
+
+        var newText = new createjs.Text("Score: " + score, '40px Oswald', '#000000');
+        newText.x = 20;
+        newText.y = 10;
+        this.stage.addChild(newText);
+
         this.socket.on('updatePosition', function(startX, startY, targetX, targetY, id) {
             app.activePlayer = id;
             if (id == "Player 1") {
@@ -173,7 +184,7 @@ var app = {
 		this.myGameObject = new createjs.Container();
 		this.myGameObject.x = this.gameObjectPosition.start.x;
         this.myGameObject.y = this.gameObjectPosition.start.y;
-        this.myGameObject.boundsRadius = 60;
+        this.myGameObject.boundsRadius = 50;
 
 		// Create a shape to give my game object some visuals
 		var shapeRect = new createjs.Shape();
@@ -197,7 +208,7 @@ var app = {
         this.player2 = new createjs.Container();
         this.player2.x = this.gameObjectPosition2.start.x;
         this.player2.y = this.gameObjectPosition2.start.y;
-        this.player2.boundsRadius = 60;
+        this.player2.boundsRadius = 50;
 
         // Create a shape to give my game object some visuals
         var shapeRect2 = new createjs.Shape();
@@ -241,6 +252,14 @@ var app = {
         }
 
         if (areActorsColliding(app.myGameObject, app.player2)) {
+            if (!isNaN(Cookies.get('score'))) {
+                var score = Cookies.get('score');
+                score += 1;
+                Cookies.set('score', score);
+            }
+            else {
+                Cookies.set('score', 1);
+            }
             app.reloadGame();
         }
 
@@ -305,7 +324,7 @@ var app = {
 
     reloadGame: function() {
         app.socket.emit('playerMove');
-        app.update();
+        app.stage.update();
     }
 }
 

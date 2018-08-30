@@ -59,12 +59,16 @@ var app = {
             {
                 src: 'js/utils.js'
             },
-            // {
-            //     src: 'assets/images/NewPiskel.json',
-            // 	id: 'frog',
-            // 	type: 'spritesheet',
-            // 	crossOrigin: true
-            // },
+            {
+                src: 'assets/images/NewPiskel.json',
+				id: 'frog',
+				type: 'spritesheet',
+				crossOrigin: true
+            },
+            {
+                src: 'assets/images/car.png',
+                id: 'car'
+            },
             {
                 src: 'assets/images/bg-temp.png',
                 id: 'background'
@@ -72,6 +76,18 @@ var app = {
             {
                 src: 'assets/sfx/dead.wav',
                 id: 'death'
+            },
+            {
+                src: 'assets/sfx/select.wav',
+                id: 'select'
+            },
+            {
+                src:'assets/sfx/vrrm.wav',
+                id: 'vroom'
+            },
+            {
+                src: 'assets/sfx/frogger.mp3',
+                id: 'music'
             }
         ];
 
@@ -95,6 +111,7 @@ var app = {
     init: function () {
         this.setupCanvas();
         this.socket = io();
+        createjs.Sound.play('music');
 
         var stageBG = new createjs.Bitmap(app.assets.getResult('background'));
         this.stage.addChild(stageBG);
@@ -180,50 +197,26 @@ var app = {
         app.socket.emit('playerMove', this.myGameObject.x, this.myGameObject.y, this.mousePos.x, this.mousePos.y, this.player2.x, this.player2.y);
     },
 
-    resetGame: function () {
-        // Create an object to move around
-        this.myGameObject = new createjs.Container();
-        this.myGameObject.x = this.gameObjectPosition.start.x;
+    resetGame: function()
+	{
+		this.myGameObject = new createjs.Bitmap(app.assets.getResult('car'));
+		this.myGameObject.x = this.gameObjectPosition.start.x;
         this.myGameObject.y = this.gameObjectPosition.start.y;
-        this.myGameObject.boundsRadius = 50;
+        this.myGameObject.boundsRadius = 100;
 
-        // Create a shape to give my game object some visuals
-        var shapeRect = new createjs.Shape();
-        this.myGameObjectColor = shapeRect.graphics.beginFill('#FFF').command;
-        shapeRect.graphics.drawRect(0, 0, 100, 100);
-        this.myGameObject.addChild(shapeRect);
-
-        // Add my game object to the stage
+		// Add my game object to the stage
         this.stage.addChild(this.myGameObject);
-
-        // Set up the screen
-        this.scaleText = new createjs.Text("Player 1", "15px Arial");
-        this.scaleText.x = app.myGameObject.x;
-        this.scaleText.y = app.myGameObject.y;
-        this.stage.addChild(this.scaleText);
     },
 
     player2: function () {
-        // Create an object to move around
-        // this.player2 = new createjs.Sprite(app.assets.getResult('frog'));
-        this.player2 = new createjs.Container();
+        this.player2 = new createjs.Sprite(app.assets.getResult('frog'));
         this.player2.x = this.gameObjectPosition2.start.x;
         this.player2.y = this.gameObjectPosition2.start.y;
-        this.player2.boundsRadius = 50;
-
-        // Create a shape to give my game object some visuals
-        var shapeRect2 = new createjs.Shape();
-        this.myGameObjectColor2 = shapeRect2.graphics.beginFill('#478365').command;
-        shapeRect2.graphics.drawRect(0, 0, 100, 100);
-        this.player2.addChild(shapeRect2);
+        this.player2.boundsRadius = 100;
+        this.player2.gotoAndPlay('move');
 
         // // Add my game object to the stage
         this.stage.addChild(this.player2);
-
-        this.scaleText2 = new createjs.Text("Player 2", "15px Arial");
-        this.scaleText2.x = app.gameObjectPosition2.start.x;
-        this.scaleText2.y = app.gameObjectPosition2.start.y;
-        this.stage.addChild(this.scaleText2);
     },
 
     // Our game loop
@@ -250,8 +243,9 @@ var app = {
         }
 
         if (areActorsColliding(app.myGameObject, app.player2)) {
+            createjs.Sound.play('death');
             if (!isNaN(Cookies.get('score'))) {
-                var score = Cookies.get('score');
+                var score = int.Parse(Cookies.get('score'));
                 score += 1;
                 Cookies.set('score', score);
             }
@@ -270,23 +264,19 @@ var app = {
             app.player2.x = newX;
             app.player2.y = newY
         });
+
+        if(app.player2.y < 30) {
+            app.reloadGame();
+        }
     },
 
     // Handles all of the lerping, called from update
     updateGameObject: function (percentVal) {
         if (app.activePlayer === "Player 1") {
-            // Change the object's position
             this.myGameObject.x = this.lerp(this.gameObjectPosition.start.x, this.gameObjectPosition.target.x, percentVal);
-
-            // Update the text displays
-            this.updateTextDisplays();
         } else {
-            // Change the object's position
             this.player2.x = this.lerp(this.gameObjectPosition2.start.x, this.gameObjectPosition2.target.x, percentVal);
             this.player2.y = this.lerp(this.gameObjectPosition2.start.y, this.gameObjectPosition2.start.y - 100, percentVal);
-
-            // Update the text displays
-            this.updateTextDisplays();
         }
     },
 
@@ -299,27 +289,10 @@ var app = {
         return valA * (1 - percentVal) + valB * percentVal;
     },
 
-    // Update all the text to show proper values
-    updateTextDisplays: function () {
-        // Set up the screen
-        this.scaleText.x = app.myGameObject.x;
-        this.scaleText.y = app.myGameObject.y;
-        this.stage.addChild(this.scaleText);
-
-        this.scaleText2.x = this.player2.x;
-        this.scaleText2.y = this.player2.y;
-        this.stage.addChild(this.scaleText2);
-        // if(this.scaleText.x > this.scaleText2.x && this.scaleText.x < this.scaleText2.x +10) {
-        //     this.scaleText.font = "30px Arial";
-        //     this.stage.addChild(this.scaleText);
-        //     this.scaleText2.font = "30px Cursive";
-        //     this.stage.addChild(this.scaleText2);
-        // }
-    },
-
-    reloadGame: function () {
+    reloadGame: function() {
         app.socket.emit('playerMove');
-        app.stage.update();
+        app.player2.x = 600;
+        app.player2.y = 800;
     }
 }
 

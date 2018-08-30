@@ -245,7 +245,7 @@ var app = {
         if (areActorsColliding(app.myGameObject, app.player2)) {
             createjs.Sound.play('death');
             if (!isNaN(Cookies.get('score'))) {
-                var score = int.Parse(Cookies.get('score'));
+                var score = parseInt(Cookies.get('score'));
                 score += 1;
                 Cookies.set('score', score);
             }

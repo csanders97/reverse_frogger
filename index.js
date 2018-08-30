@@ -12,7 +12,7 @@ var currentPosX2 = 600;
 var currentPosY2 = 800;
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/app/index.html');
+    res.sendFile(__dirname + '/app/splash.html');
 });
 
 app.use(express.static('app'));
@@ -25,7 +25,7 @@ io.on('connection', function(socket) {
         players++;
         socket.broadcast.emit('newJoin', "Player " + players);
         playersArr.push(socket.id);
-        if(playersArr.length == 3) {
+        if(playersArr.length === 3) {
             socket.id = "Player 1";
         } else {
             socket.id = "Player " + players;
@@ -37,7 +37,7 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('updatePlayers', players, playersArr);
 
         socket.on('playerMove', function(startX, startY, moveX, moveY, p2X, p2Y) {
-            if (socket.id == "Player 1") {
+            if (socket.id === "Player 1") {
                 currentPosX = moveX;
                 currentPosY = moveY;
                 io.emit('updatePosition', startX, startY, moveX, moveY, socket.id);

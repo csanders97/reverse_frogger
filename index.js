@@ -8,8 +8,8 @@ var players = 0;
 var playersArr = [];
 var currentPosX = 150;
 var currentPosY = 200;
-var currentPosX2 = 20;
-var currentPosY2 = 300;
+var currentPosX2 = 600;
+var currentPosY2 = 800;
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/app/index.html');
@@ -37,7 +37,7 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('updatePlayers', players, playersArr);
 
         socket.on('playerMove', function(startX, startY, moveX, moveY, p2X, p2Y) {
-            if(socket.id == "Player 1") {
+            if (socket.id == "Player 1") {
                 currentPosX = moveX;
                 currentPosY = moveY;
                 io.emit('updatePosition', startX, startY, moveX, moveY, socket.id);
@@ -46,6 +46,11 @@ io.on('connection', function(socket) {
                 currentPosY2 = moveY;
                 io.emit('updatePosition', p2X, p2Y, moveX, moveY, socket.id);
             }
+        });
+
+        socket.on('playerReset', function() {
+            io.emit('updatePositionP1', 20, 180);
+            io.emit('updatePositionP2', 600, 800);
         });
 
         socket.emit('new', currentPosX, currentPosY, currentPosX2, currentPosY2);

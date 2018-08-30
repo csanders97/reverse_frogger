@@ -3,7 +3,8 @@ var app = {
     stage: null,
     assets: null,
 	// My game object
-    myGameObject: null,
+    myGameObject: null,    
+    
     player2: null,
     myGameObjectColor: null,
     myGameObjectColor2: null,
@@ -32,8 +33,8 @@ var app = {
 	},
 	
 	// Lerp timers for both directions
-	lerpToTargetTimer: 3,
-	lerpMaxTime: 3,
+	lerpToTargetTimer: 1,
+	lerpMaxTime: 1,
 
 	// Screen Text
 	screenText: null,
@@ -53,8 +54,17 @@ var app = {
     beginLoad: function() {
         manifest = [
             {
-                src: 'js/actor/actor.js',
+                src: 'js/actor.js',
             },
+            {
+                src: 'js/utils.js'
+            },
+            // {
+            //     src: 'assets/images/NewPiskel.json',
+			// 	id: 'frog',
+			// 	type: 'spritesheet',
+			// 	crossOrigin: true
+            // },
             {
                 src: 'assets/images/bg-temp.png',
                 id: 'background'
@@ -96,9 +106,8 @@ var app = {
         });
 
         this.socket.on('updatePosition', function(startX, startY, targetX, targetY, id) {
-            console.log(id);
             app.activePlayer = id;
-            if(id == "Player 1") {
+            if (id == "Player 1") {
                 app.gameObjectPosition.start.x = startX;
                 app.gameObjectPosition.start.y = startY;
                 app.gameObjectPosition.target.x = targetX;
@@ -163,7 +172,8 @@ var app = {
 		// Create an object to move around
 		this.myGameObject = new createjs.Container();
 		this.myGameObject.x = this.gameObjectPosition.start.x;
-		this.myGameObject.y = this.gameObjectPosition.start.y;
+        this.myGameObject.y = this.gameObjectPosition.start.y;
+        this.myGameObject.boundsRadius = 60;
 
 		// Create a shape to give my game object some visuals
 		var shapeRect = new createjs.Shape();
@@ -183,9 +193,11 @@ var app = {
     
     player2: function() {
         // Create an object to move around
+        // this.player2 = new createjs.Sprite(app.assets.getResult('frog'));
         this.player2 = new createjs.Container();
         this.player2.x = this.gameObjectPosition2.start.x;
         this.player2.y = this.gameObjectPosition2.start.y;
+        this.player2.boundsRadius = 60;
 
         // Create a shape to give my game object some visuals
         var shapeRect2 = new createjs.Shape();
@@ -193,7 +205,7 @@ var app = {
         shapeRect2.graphics.drawRect(0, 0, 100, 100);
         this.player2.addChild(shapeRect2);
 
-        // Add my game object to the stage
+        // // Add my game object to the stage
         this.stage.addChild(this.player2);
 
         this.scaleText2 = new createjs.Text("Player 2", "15px Arial");
@@ -227,6 +239,20 @@ var app = {
 
 			app.updateGameObject(percentVal);
         }
+
+        if (areActorsColliding(app.myGameObject, app.player2)) {
+            app.reloadGame();
+        }
+
+        app.socket.on('updatePositionP1', function(newX, newY) {
+            app.myGameObject.x = newX;
+            app.myGameObject.y = newY
+        });
+
+        app.socket.on('updatePositionP2', function(newX, newY) {
+            app.player2.x = newX;
+            app.player2.y = newY
+        });
 	},
 
 	// Handles all of the lerping, called from update
@@ -241,6 +267,7 @@ var app = {
         } else {
             // Change the object's position
             this.player2.x = this.lerp(this.gameObjectPosition2.start.x, this.gameObjectPosition2.target.x, percentVal);
+            this.player2.y = this.lerp(this.gameObjectPosition2.start.y, this.gameObjectPosition2.start.y - 100, percentVal);
 
             // Update the text displays
             this.updateTextDisplays();
@@ -274,7 +301,12 @@ var app = {
         //     this.scaleText2.font = "30px Cursive";
         //     this.stage.addChild(this.scaleText2);
         // }
-	}
+    },
+
+    reloadGame: function() {
+        app.socket.emit('playerMove');
+        app.update();
+    }
 }
 
 app.beginLoad();

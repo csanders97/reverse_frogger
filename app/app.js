@@ -199,30 +199,21 @@ var app = {
 
     resetGame: function()
 	{
-		// Create an object to move around
 		this.myGameObject = new createjs.Bitmap(app.assets.getResult('car'));
 		this.myGameObject.x = this.gameObjectPosition.start.x;
         this.myGameObject.y = this.gameObjectPosition.start.y;
-        this.myGameObject.boundsRadius = 50;
+        this.myGameObject.boundsRadius = 100;
 
 		// Add my game object to the stage
         this.stage.addChild(this.myGameObject);
     },
 
     player2: function () {
-        // Create an object to move around
-        // this.player2 = new createjs.Sprite(app.assets.getResult('frog'));
         this.player2 = new createjs.Sprite(app.assets.getResult('frog'));
         this.player2.x = this.gameObjectPosition2.start.x;
         this.player2.y = this.gameObjectPosition2.start.y;
-        this.player2.boundsRadius = 50;
+        this.player2.boundsRadius = 100;
         this.player2.gotoAndPlay('move');
-
-        // Create a shape to give my game object some visuals
-        // var shapeRect2 = new createjs.Shape();
-        // this.myGameObjectColor2 = shapeRect2.graphics.beginFill('#478365').command;
-        // shapeRect2.graphics.drawRect(0, 0, 100, 100);
-        // this.player2.addChild(shapeRect2);
 
         // // Add my game object to the stage
         this.stage.addChild(this.player2);
@@ -254,7 +245,7 @@ var app = {
         if (areActorsColliding(app.myGameObject, app.player2)) {
             createjs.Sound.play('death');
             if (!isNaN(Cookies.get('score'))) {
-                var score = Cookies.get('score');
+                var score = int.Parse(Cookies.get('score'));
                 score += 1;
                 Cookies.set('score', score);
             }
@@ -273,18 +264,17 @@ var app = {
             app.player2.x = newX;
             app.player2.y = newY
         });
+
+        if(app.player2.y < 30) {
+            app.reloadGame();
+        }
     },
 
     // Handles all of the lerping, called from update
     updateGameObject: function (percentVal) {
         if (app.activePlayer === "Player 1") {
-            // Change the object's position
             this.myGameObject.x = this.lerp(this.gameObjectPosition.start.x, this.gameObjectPosition.target.x, percentVal);
-
-            // Update the text displays
-            this.updateTextDisplays();
         } else {
-            // Change the object's position
             this.player2.x = this.lerp(this.gameObjectPosition2.start.x, this.gameObjectPosition2.target.x, percentVal);
             this.player2.y = this.lerp(this.gameObjectPosition2.start.y, this.gameObjectPosition2.start.y - 100, percentVal);
         }
@@ -301,7 +291,8 @@ var app = {
 
     reloadGame: function() {
         app.socket.emit('playerMove');
-        app.stage.update();
+        app.player2.x = 600;
+        app.player2.y = 800;
     }
 }
 
